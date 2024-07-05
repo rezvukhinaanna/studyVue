@@ -1,0 +1,10 @@
+{
+    "vetur.validation.templateProps": false,
+    "vetur.completion.scaffoldSnippetSources": {
+        
+        "workspace": "💼",
+        "user": "🗒️",
+        "vetur": "✌"
+    },
+    "vetur.validation.template": true
+}
