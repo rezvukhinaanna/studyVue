@@ -43,53 +43,64 @@
   </div>
 </template>
 
-<script >
+<script>
 export default {
   data() {
     return {
-      cats: [],
-      
-      showIntelligence: false,
-      showImage: false,
-      imageSrc:""
-    }
+      cats: [], // Массив для хранения котиков
+      imageSrc: ""
+    };
   },
   methods: {
     async userData() {
       const result = await fetch('https://api.thecatapi.com/v1/breeds', 
         {method: 'get', 
-         headers:{'Content-Type':'application/json',
-                  'x-api-key': 'live_wayzGc5nRdok2P1hwtepqCgOHLkuSHJHoQq6JMZYpeIyPQLUJTI4xCcXBDcKQCwm'}
+         headers: {'Content-Type': 'application/json',
+                   'x-api-key': 'live_wayzGc5nRdok2P1hwtepqCgOHLkuSHJHoQq6JMZYpeIyPQLUJTI4xCcXBDcKQCwm'}
         })
         .then((response) => {
           if (!response.ok) {
-            throw new Error('Ошибка запроса')
+            throw new Error('Ошибка запроса');
           }
-          return response.json()
+          return response.json();
         })
         .then((info) => {
-          return info.map((item) => ({name: item.name, intelligence: item.intelligence, id: item.reference_image_id}))
-        }
-        )
-        .catch((error) => {
-          console.log(error)
+          return info.map((item) => ({name: item.name, intelligence: item.intelligence, id: item.reference_image_id}));
         })
+        .catch((error) => {
+          console.log(error);
+        });
 
-        const allSelectedCat = []
-        for (let i = 0; i < 12; i += 1) {
-          const randomIndex = Math.floor(Math.random()*result.length)
-          const selectedCat = result[randomIndex]
-          const imageID = selectedCat.id
+      const allSelectedCat = [];
+      // for (let i = 0; i < 12; i += 1) {
+      while (allSelectedCat.length < 12) {
+         const randomIndex = Math.floor(Math.random() * result.length);
+        const selectedCat = result[randomIndex];
+        const imageID = selectedCat.id;
+        const imageSrc = `https://cdn2.thecatapi.com/images/${imageID}.jpg`;
 
+        const isValidImage = await this.checkImage(imageSrc);
+        if (isValidImage && !allSelectedCat.some(cat => cat.id === selectedCat.id)) {
           allSelectedCat.push({
             ...selectedCat,
-            imageSrc: `https://cdn2.thecatapi.com/images/${imageID}.jpg`
-          })
+            imageSrc
+          });
         }
-        this.cats = allSelectedCat
+      }
+
+      this.cats = allSelectedCat;
+    },
+
+    // Метод для проверки, является ли URL изображения валидным
+    checkImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
+    }
   }
-  
-}
 }
 </script>
 
