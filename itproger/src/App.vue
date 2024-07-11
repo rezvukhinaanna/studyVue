@@ -1,42 +1,42 @@
 <template>
-  <div class="layout-wrapper layot-static">
+  <div class="layout-wrapper layot-static " :class="{'sidebar-open': isSidebarOpen}" >
     <Toolbar class="layout-toolbar">
       <template #start>
-        <div class="flex items-center gap-2">
-          <Button label="Файлы" text plain></Button>
-          <Button label="Редактор" text plain></Button>
+        <div class="flex items-center gap-2 container">
+          <Button label="Меню" text plain @click="toggleSidebar"></Button>
+          <Button label="Авторизация" text plain></Button>
           <Button label="Вид" text plain></Button>
         </div>
       </template>
       <template #end>
         <div class="flex items-center gap-2">
-          <Button label="Скачать" severity="contrast" size="small"></Button>
+          <Button
+            class="clickButton"
+            label="Primary"
+            rounded
+            type="button"
+            @click="userData()"
+            >Показать котиков</Button
+          >
         </div>
       </template>
     </Toolbar>
 
     <div class="layout-sidebar">
-      <Button 
-        class="clickButton"
-        label="Primary" 
-        rounded 
-        type="button" 
-        @click="userData()"
-      >Показать котиков</Button>
+      <!-- <Button label="Скачать все" severity="contrast" size="small"></Button> -->
+      <FileUpload mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000" @upload="onUpload" />
     </div>
     <div class="content">
       <div class="cat-grid">
         <div class="cat-info" v-for="cat in cats" :key="cat.id">
           <h1>{{ cat.name }}</h1>
-          <Image 
-            alt="Изображение котика" 
+          <Image
+            alt="Изображение котика"
             preview
-            :src="cat.imageSrc" 
+            :src="cat.imageSrc"
             width="250"
           ></Image>
-          <h1
-            class="intelligence"
-          >Интеллект: {{ cat.intelligence }}</h1>
+          <h1 class="intelligence">Интеллект: {{ cat.intelligence }}</h1>
         </div>
       </div>
     </div>
@@ -48,46 +48,59 @@ export default {
   data() {
     return {
       cats: [], // Массив для хранения котиков
-      imageSrc: ""
+      imageSrc: "",
+      isSidebarOpen: false,
     };
   },
   methods: {
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
     async userData() {
-      const result = await fetch('https://api.thecatapi.com/v1/breeds', 
-        {method: 'get', 
-         headers: {'Content-Type': 'application/json',
-                   'x-api-key': 'live_wayzGc5nRdok2P1hwtepqCgOHLkuSHJHoQq6JMZYpeIyPQLUJTI4xCcXBDcKQCwm'}
-        })
+      const result = await fetch("https://api.thecatapi.com/v1/breeds", {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key":
+            "live_wayzGc5nRdok2P1hwtepqCgOHLkuSHJHoQq6JMZYpeIyPQLUJTI4xCcXBDcKQCwm",
+        },
+      })
         .then((response) => {
           if (!response.ok) {
-            throw new Error('Ошибка запроса');
+            throw new Error("Ошибка запроса");
           }
           return response.json();
         })
         .then((info) => {
-          return info.map((item) => ({name: item.name, intelligence: item.intelligence, id: item.reference_image_id}));
+          return info.map((item) => ({
+            name: item.name,
+            intelligence: item.intelligence,
+            id: item.reference_image_id,
+          }));
         })
         .catch((error) => {
           console.log(error);
         });
 
       const allSelectedCat = [];
-      // for (let i = 0; i < 12; i += 1) {
-      while (allSelectedCat.length < 12) {
-         const randomIndex = Math.floor(Math.random() * result.length);
+
+      while (allSelectedCat.length < 15) {
+        const randomIndex = Math.floor(Math.random() * result.length);
         const selectedCat = result[randomIndex];
         const imageID = selectedCat.id;
         const imageSrc = `https://cdn2.thecatapi.com/images/${imageID}.jpg`;
 
         const isValidImage = await this.checkImage(imageSrc);
-        if (isValidImage && !allSelectedCat.some(cat => cat.id === selectedCat.id)) {
+        if (
+          isValidImage &&
+          !allSelectedCat.some((cat) => cat.id === selectedCat.id)
+        ) {
           allSelectedCat.push({
             ...selectedCat,
-            imageSrc
+            imageSrc,
           });
         }
       }
-
       this.cats = allSelectedCat;
     },
 
@@ -99,9 +112,9 @@ export default {
         img.onerror = () => resolve(false);
         img.src = url;
       });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -124,15 +137,15 @@ body {
   width: 100%;
   padding: 0 2rem;
   align-items: center;
-  position:fixed;
+  position: fixed;
   z-index: 1;
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); 
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   /* padding: 1rem 1rem 1rem 1.5rem */
 }
 
 .layout-sidebar {
   display: flex;
-  align-items:center;
+  align-items: center;
   justify-content: center;
   flex-direction: column;
   position: fixed;
@@ -144,7 +157,17 @@ body {
   padding: 0.5rem 1.5rem;
   background-color: rgba(255, 255, 255, 0.982);
   /* background-color: rgb(246, 246, 246); */
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s, left 0.2s;
+  top: 7rem;
+  left: 1rem;
+  border-radius: 12px;
+  padding: 0.5rem 1.5rem;
+}
+
+.sidebar-open .layout-sidebar {
+  transform: translateX(0);
 }
 
 h1 {
@@ -171,7 +194,7 @@ button {
 }
 
 button:hover {
-  background-color:rgb(88, 88, 240)
+  background-color: rgb(88, 88, 240);
 }
 
 .image {
@@ -179,9 +202,15 @@ button:hover {
 }
 
 .content {
+  margin-left: 3rem;
+  padding-top: 7rem;
+  width: 95%;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-open .content {
   margin-left: 350px;
-  padding-top: 8rem;
-  width: calc(100% - 350px);
+  width: 77%;
 }
 
 #app {
@@ -215,7 +244,7 @@ span {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+
   align-items: center;
 }
 
@@ -230,6 +259,5 @@ span {
   height: auto;
   margin-top: 10px;
 }
-</style>
 
-<!-- border-radius: 3rem; -->
+</style>
