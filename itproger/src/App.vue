@@ -29,6 +29,14 @@
 
     <div class="content">
       <div class="cat-grid">
+        <div class="cat-info" v-for="image in userImages" :key="image.id">
+          <h1>Твой котик</h1>
+          <img
+            alt="Изображение котика"
+            :src="image.src"
+            class="cat-image"
+          />
+        </div>
         <div class="cat-info" v-for="cat in cats" :key="cat.id">
           <h1>{{ cat.name }}</h1>
           <img
@@ -38,14 +46,7 @@
           />
           <h1 class="intelligence">Интеллект: {{ cat.intelligence }}</h1>
         </div>
-        <div class="cat-info" v-for="image in userImages" :key="image.id">
-          <h1>Твой котик</h1>
-          <img
-            alt="Изображение котика"
-            :src="image.src"
-            class="cat-image"
-          />
-        </div>
+        
       </div>
     </div>
   </div>
@@ -133,6 +134,9 @@ export default {
       }
     },
   },
+  mounted() {
+    this.userData();
+  },
 };
 </script>
 
@@ -140,7 +144,6 @@ export default {
 .layout-wrapper {
   min-height: 100vh;
 }
-
 .layout-toolbar {
   display: flex;
   height: 5rem;
