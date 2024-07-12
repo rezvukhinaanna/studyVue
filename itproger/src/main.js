@@ -8,6 +8,7 @@ import Menubar from "primevue/menubar";
 import PrimeVue from "primevue/config";
 import Aura from "@primevue/themes/aura";
 import FileUpload from 'primevue/fileupload';
+import ProgressSpinner from 'primevue/progressspinner';
 
 // import './assets/main.css'
 const app = createApp(App);
@@ -21,5 +22,6 @@ app.component("Image", Image);
 app.component("Toolbar", Toolbar);
 app.component("Sidebar", Sidebar);
 app.component("Menubar", Menubar);
-app.component("FileUpload", FileUpload)
+app.component("FileUpload", FileUpload);
+app.component("ProgressSpinner", ProgressSpinner);
 app.mount("#app");

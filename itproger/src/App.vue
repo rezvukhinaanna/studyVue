@@ -21,9 +21,10 @@
       </template>
     </Toolbar>
 
+    
+
     <div class="layout-sidebar upload">
       <h1>Выбери своего котика, чтобы он присоединился к друзьям</h1>
-      <!-- <div><b></b></div> -->
       <input type="file" accept="image/*" @change="onFileChange">
     </div>
 
@@ -46,7 +47,7 @@
           />
           <h1 class="intelligence">Интеллект: {{ cat.intelligence }}</h1>
         </div>
-        
+        <ProgressSpinner v-if="isLoading"/>
       </div>
     </div>
   </div>
@@ -59,6 +60,7 @@ export default {
       cats: [], // Массив для хранения котиков
       userImages: [], // Массив для хранения пользовательских изображений
       isSidebarOpen: false,
+      isLoading: true,
     };
   },
   methods: {
@@ -66,6 +68,7 @@ export default {
       this.isSidebarOpen = !this.isSidebarOpen;
     },
     async userData() {
+      this.isLoading = true;
       const result = await fetch("https://api.thecatapi.com/v1/breeds", {
         method: "get",
         headers: {
@@ -88,7 +91,10 @@ export default {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      // .finally(() => {
+      //   toggleLoader()
+      // })
 
       const allSelectedCat = [];
 
@@ -110,6 +116,7 @@ export default {
         }
       }
       this.cats = allSelectedCat;
+      this.isLoading = false;
     },
     checkImage(url) {
       return new Promise((resolve) => {
@@ -133,10 +140,11 @@ export default {
         reader.readAsDataURL(files[0]);
       }
     },
+    
   },
   mounted() {
     this.userData();
-  },
+  }, 
 };
 </script>
 
