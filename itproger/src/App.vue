@@ -4,8 +4,8 @@
       <template #start>
         <div class="flex items-center gap-2 container">
           <Button label="Меню" text plain @click="toggleSidebar"></Button>
-          <Button label="Авторизация" text plain></Button>
-          <Button label="Вид" text plain></Button>
+          <!-- <Button label="Авторизация" text plain></Button>
+          <Button label="Вид" text plain></Button> -->
         </div>
       </template>
       <template #end>
